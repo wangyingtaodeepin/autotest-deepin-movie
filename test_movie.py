@@ -75,6 +75,9 @@ def keyTypeStr(str):
 
 def mouseClickL(x, y):
     m.move(x, y)
+    m.move(x-1, y-1)
+    m.move(x+1, y+1)
+    m.move(x, y)
     sleep(2)
     m.click(x, y)
     sleep(2)
@@ -89,6 +92,7 @@ def saveDeepinMovieBase():
         if conponentxy.wmname == name:
             xy = window.get_client_window_geometry()
             listxy = list(xy)
+            print(xy)
             conponentxy.setDeepinMovieBase(tuple(listxy[0:2]))
             return True
 
