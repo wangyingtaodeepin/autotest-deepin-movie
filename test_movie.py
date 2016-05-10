@@ -58,6 +58,10 @@ class ConponentXY(object):
         # 深度影院下拉菜单中的名称
         self.submenu_set = "submenu_set"
 
+        # setting -> player
+        self.submenu_set_player = "player"
+        self.submenu_set_player_muted = "muted"
+
     def setDeepinMovieBase(self, xy):
         log("base: "),
         log(xy)
@@ -83,11 +87,11 @@ class ConponentXY(object):
             return tuple(xy)
 
     def getDeepinMovieSettingXY(self, key):
-        xystr = str(self.conponentxy.get(self.deepinmoviesetting, self.base))
+        xystr = str(self.conponentxy.get(self.deepinmoviesetting, key))
         xy = parserxy(xystr)
 
         if self.base != key:
-            basexystr = str(self.conponentxy.get(self.deepinmovie, self.base))
+            basexystr = str(self.conponentxy.get(self.deepinmoviesetting, self.base))
             basexy = parserxy(basexystr)
             listxy = []
             listxy.append(int(basexy[0]) + int(xy[0]))
@@ -98,6 +102,11 @@ class ConponentXY(object):
 
     def clickDeepinMovie(self, conponent):
         xy = self.getDeepinMovieXY(conponent)
+        log("click: " + str(xy))
+        mouseClickL(xy[0], xy[1])
+
+    def clickDeepinMovieSetting(self, conponent):
+        xy = self.getDeepinMovieSettingXY(conponent)
         log("click: " + str(xy))
         mouseClickL(xy[0], xy[1])
 
@@ -144,7 +153,6 @@ def saveDeepinMovieSettingBase():
 
     for window in screen.get_windows():
         name = window.get_name()
-        log(name)
         if conponentxy.setting_wmname == name:
             xy = window.get_client_window_geometry()
             listxy = list(xy)
@@ -180,3 +188,5 @@ conponentxy.clickDeepinMovie(conponentxy.submenu)
 conponentxy.clickDeepinMovie(conponentxy.submenu_set)
 saveDeepinMovieSettingBase()
 
+conponentxy.clickDeepinMovieSetting(conponentxy.submenu_set_player)
+conponentxy.clickDeepinMovieSetting(conponentxy.submenu_set_player_muted)
