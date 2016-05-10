@@ -51,8 +51,8 @@ class ConponentXY(object):
             basexystr = str(self.conponentxy.get(self.deepinmovie, self.base))
             basexy = parserxy(basexystr)
             listxy = []
-            listxy.append(int(xy[0]) + int(basexy[0]))
-            listxy.append(int(xy[1]) + int(basexy[1]))
+            listxy.append(int(basexy[0]) + int(basexy[2]) - int(xy[0]))
+            listxy.append(int(basexy[1]) + int(xy[1]))
             return tuple(listxy)
         else:
             return tuple(xy)
@@ -93,7 +93,7 @@ def saveDeepinMovieBase():
             xy = window.get_client_window_geometry()
             listxy = list(xy)
             print(xy)
-            conponentxy.setDeepinMovieBase(tuple(listxy[0:2]))
+            conponentxy.setDeepinMovieBase(tuple(listxy[0:4]))
             return True
 
     return False
