@@ -20,6 +20,11 @@ defaultconponentxy = "conponentxy.ini"
 k = PyKeyboard()
 m = PyMouse()
 waittime = 30
+debug = True
+
+def log(str):
+    if True == debug:
+        print(str)
 
 def parserxy(str):
     tempstr = str
@@ -32,16 +37,36 @@ class ConponentXY(object):
     def __init__(self):
         self.conponentxy = configparser.ConfigParser()
         self.conponentxy.read(defaultconponentxy)
+
+        # 深度影院窗口名称
         self.wmname = "深度影院"
+        # 设置窗口名称
+        self.setting_wmname = "Deepin Movie"
+
+        # 深度影院窗口坐标
         self.deepinmovie = "deepin-movie"
+
+        # 设置窗口坐标
+        self.deepinmoviesetting = "deepin-movie-setting"
+
+        # 通用属性名称
         self.base = "base"
+
+        # 深度影院下拉菜单名称
         self.submenu = "submenu"
+
+        # 深度影院下拉菜单中的名称
         self.submenu_set = "submenu_set"
 
     def setDeepinMovieBase(self, xy):
-        print("base: "),
-        print(xy)
+        log("base: "),
+        log(xy)
         self.conponentxy.set(self.deepinmovie, self.base, xy)
+
+    def setDeepinMovieSettingBase(self, xy):
+        log("setting base:"),
+        log(xy)
+        self.conponentxy.set(self.deepinmoviesetting, self.base, xy)
 
     def getDeepinMovieXY(self, key):
         xystr = str(self.conponentxy.get(self.deepinmovie, key))
@@ -57,9 +82,23 @@ class ConponentXY(object):
         else:
             return tuple(xy)
 
+    def getDeepinMovieSettingXY(self, key):
+        xystr = str(self.conponentxy.get(self.deepinmoviesetting, self.base))
+        xy = parserxy(xystr)
+
+        if self.base != key:
+            basexystr = str(self.conponentxy.get(self.deepinmovie, self.base))
+            basexy = parserxy(basexystr)
+            listxy = []
+            listxy.append(int(basexy[0]) + int(xy[0]))
+            listxy.append(int(basexy[1]) + int(xy[1]))
+            return tuple(listxy)
+        else:
+            return tuple(xy)
+
     def clickDeepinMovie(self, conponent):
         xy = self.getDeepinMovieXY(conponent)
-        print("click: " + str(xy))
+        log("click: " + str(xy))
         mouseClickL(xy[0], xy[1])
 
 conponentxy = ConponentXY()
@@ -92,8 +131,25 @@ def saveDeepinMovieBase():
         if conponentxy.wmname == name:
             xy = window.get_client_window_geometry()
             listxy = list(xy)
-            print(xy)
+            log(xy)
             conponentxy.setDeepinMovieBase(tuple(listxy[0:4]))
+            return True
+
+    return False
+
+def saveDeepinMovieSettingBase():
+    screen = wnck.screen_get_default()
+    while gtk.events_pending():
+        gtk.main_iteration()
+
+    for window in screen.get_windows():
+        name = window.get_name()
+        log(name)
+        if conponentxy.setting_wmname == name:
+            xy = window.get_client_window_geometry()
+            listxy = list(xy)
+            log(xy)
+            conponentxy.setDeepinMovieSettingBase(tuple(listxy[0:4]))
             return True
 
     return False
@@ -111,6 +167,7 @@ class Waitter(object):
                 pass
 
             if ev.type == X.MapNotify:
+                log("MapNotify")
                 if saveDeepinMovieBase():
                     break
 
@@ -121,3 +178,5 @@ Waitter(Display()).loop()
 
 conponentxy.clickDeepinMovie(conponentxy.submenu)
 conponentxy.clickDeepinMovie(conponentxy.submenu_set)
+saveDeepinMovieSettingBase()
+
