@@ -7,8 +7,10 @@ from time import sleep
 import gtk
 import wnck
 import sys
+import unittest
 from Xlib import X
 from Xlib.display import Display
+from movieconfig import *
 
 if 2 == sys.version_info.major:
     import ConfigParser as configparser
@@ -60,7 +62,7 @@ class ConponentXY(object):
 
         # setting -> player
         self.submenu_set_player = "player"
-        self.submenu_set_player_muted = "muted"
+        self.submenu_set_player_fullscreenOnOpenFile = "fullscreenOnOpenFile"
 
     def setDeepinMovieBase(self, xy):
         log("base: "),
@@ -189,4 +191,33 @@ conponentxy.clickDeepinMovie(conponentxy.submenu_set)
 saveDeepinMovieSettingBase()
 
 conponentxy.clickDeepinMovieSetting(conponentxy.submenu_set_player)
-conponentxy.clickDeepinMovieSetting(conponentxy.submenu_set_player_muted)
+conponentxy.clickDeepinMovieSetting(conponentxy.submenu_set_player_fullscreenOnOpenFile)
+
+class testDeepinMovie(unittest.TestCase):
+    @classmethod
+    def setUpClass(cls):
+        cls.movieconfig = movieConfig()
+
+    @classmethod
+    def tearDownClass(cls):
+        pass
+
+    def setUp(self):
+        pass
+
+    def tearDown(self):
+        pass
+
+    def testSettingfullscreenOnOpenFile(self):
+        v = self.movieconfig.getPlayer(self.movieconfig.player_fullscreenOnOpenFile)
+        self.assertEqual(stringtobool(v), True)
+
+def suite():
+    suite = unittest.TestSuite()
+    suite.addTest(testDeepinMovie("testSettingfullscreenOnOpenFile"))
+    return suite
+
+if __name__ == "__main__":
+    unittest.main(defaultTest = 'suite')
+
+
